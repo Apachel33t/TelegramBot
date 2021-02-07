@@ -112,8 +112,11 @@ class ProjectsByTelegramUser(models.Model):
     title = models.TextField(
         verbose_name="Title of project"
     )
-    img = models.TextField(
-        verbose_name="Attached files"
+    file = models.TextField(
+        verbose_name="Attached file"
+    )
+    filename = models.TextField(
+        verbose_name="Name of attached file"
     )
     data_of_create = models.DateField(
         verbose_name="Date of create project",
@@ -128,13 +131,21 @@ class ProjectsByTelegramUser(models.Model):
     description = models.TextField(
         verbose_name="Project description"
     )
+    deadline = models.DateField(
+        verbose_name="Task deadline"
+    )
     status = models.TextField(
         verbose_name="Status of project"
     )
     """Use external_id in table user"""
     performer_ext_id = models.TextField(
-        verbose_name="Id telegram user which perform task"
+        verbose_name="Id telegram user which perform task",
+        null=True,
+        default=None,
+        blank=True
     )
+
+    objects = ProjectsByTelegramUserManager()
 
 
 class FilesByTelegramUser(models.Model):

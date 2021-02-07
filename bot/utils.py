@@ -1,5 +1,5 @@
 from django.conf import settings
-#from pprint import pprint
+from pprint import pprint
 
 import requests
 import json
@@ -33,11 +33,10 @@ class ReturnTelegramChatObjects:
 
     def __init__(self, request):
         req = json.loads(request.body)
-        if 'document' in req:
+        if 'document' in req['message']:
             self.file_id = req['message']['document']['file_id']
             self.file_name = req['message']['document']['file_name']
             self.msg_text = None
-            get_file(self.file_id)
         elif 'text' in req['message']:
             self.msg_text = req['message']['text']
             self.file_id = None

@@ -32,3 +32,18 @@ class UserRequestWithdrawCashManager(models.Manager):
             card_num=card_num,
             phone_num=phone_num
         )
+
+
+class ProjectsByTelegramUserManager(models.Manager):
+    def create_project(self, external_id, title, file, filename, cost, category, description, deadline):
+        project = self.create(
+            external_id=external_id,
+            title=title,
+            file=file,
+            filename=filename,
+            cost=cost,
+            category=category,
+            description=description,
+            deadline=deadline,
+            status='waiting'
+        )

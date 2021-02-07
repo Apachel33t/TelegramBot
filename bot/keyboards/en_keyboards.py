@@ -43,12 +43,10 @@ en_accept_send_data_withdraw_keyboard = {
 
 en_categories_of_projects = {
     'keyboard': [
-        [
-            '🖼 Graphic',
-            '📊 SMM',
-            '🌐 Sites',
-            '🔙 Back to'
-        ]
+        ['🖼 Graphic'],
+        ['📊 SMM'],
+        ['🌐 Sites'],
+        ['🔙 Back to'],
     ],
     'resize_keyboard': True
 }
@@ -91,6 +89,36 @@ en_role_keyboard = {
         ],
         [
             '🔙 Back to',
+        ]
+    ],
+    'resize_keyboard': True
+}
+
+en_attach_file_keyboard = {
+    'keyboard': [
+        [
+            'Dont attach file',
+            '🔙 Back to'
+        ]
+    ],
+    'resize_keyboard': True
+}
+
+en_create_project_keyboard = {
+    'keyboard': [
+        [
+            '🔙 Back to'
+        ]
+    ],
+    'resize_keyboard': True
+}
+
+
+en_edit_project_keyboard = {
+    'keyboard': [
+        [
+            'Delete',
+            '🔙 Back to'
         ]
     ],
     'resize_keyboard': True

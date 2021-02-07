@@ -8,6 +8,12 @@ ru_switch_lang_keyboard = {
     'resize_keyboard': True
 }
 
+empty_keyboard = {
+    'keyboard': [
+
+    ],
+    'resize_keyboard': True
+}
 
 ru_common_user_keyboard = {
     'keyboard': [
@@ -34,14 +40,41 @@ ru_accept_send_data_withdraw_keyboard = {
     'resize_keyboard': True
 }
 
-ru_categories_of_projects = {
+ru_attach_file_keyboard = {
     'keyboard': [
         [
-            '🖼 Графика',
-            '📊 SMM',
-            '🌐 Сайты',
+            'Не прикладывать файл',
             '🔙 Назад'
         ]
+    ],
+    'resize_keyboard': True
+}
+
+ru_edit_project_keyboard = {
+    'keyboard': [
+        [
+            'Удалить',
+            '🔙 Назад'
+        ]
+    ],
+    'resize_keyboard': True
+}
+
+ru_create_project_keyboard = {
+    'keyboard': [
+        [
+            '🔙 Назад'
+        ]
+    ],
+    'resize_keyboard': True
+}
+
+ru_categories_of_projects = {
+    'keyboard': [
+        ['🖼 Графика'],
+        ['📊 SMM'],
+        ['🌐 Сайты'],
+        ['🔙 Назад'],
     ],
     'resize_keyboard': True
 }

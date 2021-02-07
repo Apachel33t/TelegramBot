@@ -1,4 +1,5 @@
 from .utils import *
+from datetime import datetime, date, timedelta
 
 # File with messages, statuses, error messages in different languages
 # for all user (super user, admins, common users, payment users)
@@ -42,6 +43,61 @@ def en_greeting_message(chat_object):
                  f'"📝 My projects" - click on this button to view the projects you are working on,\n'
                  f'"❓ Help" - click on this button to go to a chat with an online consultant,\n',
                  chat_object.from_id)
+
+
+def ru_send_project_for_accept(chat_object, client):
+    if client.hexists(f"user:{chat_object.from_id}", "project_filename"):
+        filename = str(client.hget(f"user:{chat_object.from_id}", "project_filename"), 'utf-8')
+    else:
+        filename = 'Вы не прикладывали файл.'
+    send_message(f'Название: {str(client.hget(f"user:{chat_object.from_id}", "project_name"), "utf-8")}\n'
+                 f'Категория: {str(client.hget(f"user:{chat_object.from_id}", "project_category"), "utf-8")}\n'
+                 f'Описание: {str(client.hget(f"user:{chat_object.from_id}", "project_description"), "utf-8")}\n'
+                 f'Срок до: {str(client.hget(f"user:{chat_object.from_id}", "project_deadline"), "utf-8")}\n'
+                 f'Файл: {filename}\n'
+                 f'Цена: {str(client.hget(f"user:{chat_object.from_id}", "project_cost"), "utf-8")}', chat_object.from_id)
+
+
+def en_send_project_for_accept(chat_object, client):
+    if client.hexists(f"user:{chat_object.from_id}", "project_filename"):
+        filename = str(client.hget(f"user:{chat_object.from_id}", "project_filename"), 'utf-8')
+    else:
+        filename = 'You dont attach file.'
+    send_message(f'Title: {str(client.hget(f"user:{chat_object.from_id}", "project_name"), "utf-8")}\n'
+                 f'Category: {str(client.hget(f"user:{chat_object.from_id}", "project_category"), "utf-8")}\n'
+                 f'Description: {str(client.hget(f"user:{chat_object.from_id}", "project_description"), "utf-8")}\n'
+                 f'Deadline: {str(client.hget(f"user:{chat_object.from_id}", "project_deadline"), "utf-8")}\n'
+                 f'File: {filename}\n'
+                 f'Cost: {str(client.hget(f"user:{chat_object.from_id}", "project_cost"), "utf-8")}', chat_object.from_id)
+
+
+def ru_send_his_project(chat_object, task, buttons):
+    if task.filename == 'empty':
+        filename = 'Вы не приложили файла.'
+    else:
+        filename = task.filename
+    send_keyboard(buttons, chat_object.from_id,
+                  f'Название: {task.title}\n'
+                  f'Категория {task.category}\n'
+                  f'Описание: {task.description}'
+                  f'Срок до: {task.deadline.strftime("%d.%m.%Y")}\n'
+                  f'Файл: {filename}'
+                  f'Цена: {task.cost}')
+
+
+def en_send_his_project(chat_object, task, buttons):
+    if task.filename == 'empty':
+        filename = 'You do not attach file.'
+    else:
+        filename = task.filename
+    deadline = task.deadline.strftime("%d.%m.%Y")
+    send_keyboard(buttons, chat_object.from_id,
+                  f'Name: {task.title}\n'
+                  f'Category {task.category}\n'
+                  f'Description: {task.description}\n'
+                  f'Deadline: {deadline}\n'
+                  f'File: {filename}\n'
+                  f'Cost: {task.cost}')
 
 
 def ru_check_input_withdraw(sum_withdraw, name_bank, phone=False, card=False):
