@@ -47,3 +47,12 @@ class ProjectsByTelegramUserManager(models.Manager):
             deadline=deadline,
             status='waiting'
         )
+
+
+class OffersToCustomerManager(models.Manager):
+    def create_offer(self, external_from_id, external_to_id, offer):
+        project = self.create(
+            external_from_id=external_from_id,
+            external_to_id=external_to_id,
+            offer=offer
+        )

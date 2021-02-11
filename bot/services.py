@@ -133,6 +133,13 @@ class TelegramBot:
                                                                            'dd.mm.yyyy')
 
     @staticmethod
+    def send_emtpy_list(chat_object):
+        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
+            ru_send_empty_list(chat_object)
+        else:
+            en_send_empty_list(chat_object)
+
+    @staticmethod
     def select_a_project_category(chat_object):
         if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
             send_keyboard(ru_categories_of_projects, chat_object.from_id, 'Выберете категорию проекта')
@@ -140,11 +147,49 @@ class TelegramBot:
             send_keyboard(en_categories_of_projects, chat_object.from_id, 'Select a project category')
 
     @staticmethod
+    def prev_next_keyboard(chat_object, item_list):
+        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
+            msg = ru_send_project(item_list)
+            send_keyboard(ru_prev_next_keyboard, chat_object.from_id, msg)
+        else:
+            msg = en_send_project(item_list)
+            send_keyboard(en_prev_next_keyboard, chat_object.from_id, msg)
+
+    @staticmethod
+    def send_enter_offer(chat_object):
+        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
+            send_keyboard(ru_decline_keyboard, chat_object.from_id, 'Оставьте отклик под выбранным заданием.')
+        else:
+            send_keyboard(en_decline_keyboard, chat_object.from_id, 'Leave offer under project.')
+
+    @staticmethod
+    def send_offer_to_custumer(chat_object, client):
+        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
+            send_keyboard(ru_decline_keyboard, chat_object.from_id, 'Оставьте отклик под выбранным заданием.')
+        else:
+            send_keyboard(en_decline_keyboard, chat_object.from_id, 'Leave offer under project.')
+
+    @staticmethod
+    def send_notify_to_user(chat_object, customer_id, client):
+        project_name = str(client.hget(f"user:{chat_object.from_id}", "project_name_customer"), "UTF-8")
+        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
+            ru_send_offer_to_customer(customer_id, project_name)
+        else:
+            en_send_offer_to_customer(customer_id, project_name)
+
+    @staticmethod
+    def that_was_last_task(chat_object):
+        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
+            ru_that_was_last_project(chat_object)
+        else:
+            en_that_was_last_project(chat_object)
+
+    @staticmethod
     def send_error_project_name_incorrect(chat_object):
         if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
-            ru_error_message(chat_object, 'слишком длинное имя.')
+            ru_error_message(chat_object, 'превышен лимит длины.')
         else:
-            en_error_message(chat_object, 'to long name.')
+            en_error_message(chat_object, 'length limit exceeded.')
 
     @staticmethod
     def send_error_project_deadline_incorrect(chat_object):
@@ -173,6 +218,21 @@ class TelegramBot:
             send_keyboard(ru_common_user_keyboard, chat_object.from_id, 'Главная панель.')
         else:
             send_keyboard(en_common_user_keyboard, chat_object.from_id, 'Main panel.')
+
+    @staticmethod
+    def return_list_keyboard(chat_object, items, message_object):
+        """Waiting variable items as list (array)"""
+        keyboard = []
+        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
+            keyboard.append(['🔙 Назад'])
+            message = message_object.get('ru')
+        else:
+            keyboard.append(['🔙 Back to'])
+            message = message_object.get('en')
+        for item in items:
+            keyboard.append([f'{item.get("title")}@{item.get("id")}@{item.get("external_id")}'])
+        empty_keyboard.update({"keyboard": keyboard})
+        send_keyboard(empty_keyboard, chat_object.from_id, message)
 
     @staticmethod
     def send_help_message(chat_object):

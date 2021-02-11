@@ -16,6 +16,7 @@ from .services import TelegramBot
 # Actions
 from .actions.action_profile import ActionProfile
 from .actions.action_user_projects import UserProjects
+from .actions.action_select_project import SelectProject
 
 # Redis usage in this project like something between "state" or "session"
 client = redis.Redis(host='127.0.0.1', port=6379)
@@ -47,7 +48,8 @@ class TelegramBotController(HttpRequest):
             except Exception:
                 print(ERROR_WHEN_TRYING_CREATE_OR_AUTHENTICATE_USER)
         elif chat_object.msg_text in choose_project:
-            pass
+            client.hset(f"user:{chat_object.from_id}", "position", "select_project")
+            TelegramBot.select_a_project_category(chat_object)
         elif chat_object.msg_text in my_profile:
             client.hset(f"user:{chat_object.from_id}", "position", "my_profile_user")
             TelegramBot.send_his_profile(chat_object)
@@ -72,5 +74,10 @@ class TelegramBotController(HttpRequest):
                 UserProjects.switch_user_projects(chat_object, position, client)
             except Exception:
                 print('Exception in common_user_projects')
+        elif position == b'select_project':
+            try:
+                SelectProject.switch_select_project(chat_object, position, client)
+            except Exception:
+                print('Exception in select_project')
         else:
             pprint('ELSE')

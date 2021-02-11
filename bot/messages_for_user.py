@@ -49,7 +49,7 @@ def ru_send_project_for_accept(chat_object, client):
     if client.hexists(f"user:{chat_object.from_id}", "project_filename"):
         filename = str(client.hget(f"user:{chat_object.from_id}", "project_filename"), 'utf-8')
     else:
-        filename = 'Вы не прикладывали файл.'
+        filename = 'Пусто.'
     send_message(f'Название: {str(client.hget(f"user:{chat_object.from_id}", "project_name"), "utf-8")}\n'
                  f'Категория: {str(client.hget(f"user:{chat_object.from_id}", "project_category"), "utf-8")}\n'
                  f'Описание: {str(client.hget(f"user:{chat_object.from_id}", "project_description"), "utf-8")}\n'
@@ -62,13 +62,47 @@ def en_send_project_for_accept(chat_object, client):
     if client.hexists(f"user:{chat_object.from_id}", "project_filename"):
         filename = str(client.hget(f"user:{chat_object.from_id}", "project_filename"), 'utf-8')
     else:
-        filename = 'You dont attach file.'
+        filename = 'Empty.'
     send_message(f'Title: {str(client.hget(f"user:{chat_object.from_id}", "project_name"), "utf-8")}\n'
                  f'Category: {str(client.hget(f"user:{chat_object.from_id}", "project_category"), "utf-8")}\n'
                  f'Description: {str(client.hget(f"user:{chat_object.from_id}", "project_description"), "utf-8")}\n'
                  f'Deadline: {str(client.hget(f"user:{chat_object.from_id}", "project_deadline"), "utf-8")}\n'
                  f'File: {filename}\n'
                  f'Cost: {str(client.hget(f"user:{chat_object.from_id}", "project_cost"), "utf-8")}', chat_object.from_id)
+
+
+def ru_send_project(project):
+    if project.get("filename") == 'empty':
+        filename = 'Пусто.'
+    else:
+        filename = project.get("filename")
+    return (f'Название: {project.get("title")}\n'
+            f'Категория {project.get("category")}\n'
+            f'Описание: {project.get("description")}\n'
+            f'Срок до: {project.get("deadline").strftime("%d.%m.%Y")}\n'
+            f'Файл: {filename}\n'
+            f'Цена: {project.get("cost")}\n')
+
+
+def en_send_project(project):
+    if project.get("filename") == 'empty':
+        filename = 'Empty.'
+    else:
+        filename = project.get("filename")
+    return (f'Name: {project.get("title")}\n'
+            f'Category {project.get("category")}\n'
+            f'Description: {project.get("description")}\n'
+            f'Deadline: {project.get("deadline").strftime("%d.%m.%Y")}\n'
+            f'File: {filename}\n'
+            f'Cost: {project.get("cost")}\n')
+
+
+def ru_that_was_last_project(chat_object):
+    send_message('Это было последнее задание.', chat_object.from_id)
+
+
+def en_that_was_last_project(chat_object):
+    send_message('That was last project.', chat_object.from_id)
 
 
 def ru_send_his_project(chat_object, task, buttons):
@@ -79,9 +113,9 @@ def ru_send_his_project(chat_object, task, buttons):
     send_keyboard(buttons, chat_object.from_id,
                   f'Название: {task.title}\n'
                   f'Категория {task.category}\n'
-                  f'Описание: {task.description}'
+                  f'Описание: {task.description}\n'
                   f'Срок до: {task.deadline.strftime("%d.%m.%Y")}\n'
-                  f'Файл: {filename}'
+                  f'Файл: {filename}\n'
                   f'Цена: {task.cost}')
 
 
@@ -176,6 +210,33 @@ def en_send_help_message(chat_object):
                  "The wait can range from 5 minutes to 1 hour.", chat_object.from_id)
 
 
+def ru_send_offer_to_customer(customer_id, name_of_project):
+    send_message(f"Новое предложение, {name_of_project}.", customer_id)
+
+
+def en_send_offer_to_customer(customer_id, name_of_project):
+    send_message(f"New offer, {name_of_project}.", customer_id)
+
+
+message_completed_projects = {
+    "ru": 'Список завершенных проектов.',
+    "en": 'List of completed projects.'
+}
+
+message_processing_projects = {
+    "ru": 'Список проектов в работе.',
+    "en": 'List of processing projects.'
+}
+
+def ru_send_empty_list(chat_object):
+    send_message("Пусто.", chat_object.from_id)
+
+
+def en_send_empty_list(chat_object):
+    send_message("Empty.", chat_object.from_id)
+
+
+# Common responses (success or error)
 def ru_success_message(chat_object):
     send_message("Успешно.", chat_object.from_id)
 

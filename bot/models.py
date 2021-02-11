@@ -106,6 +106,7 @@ class ProfileTelegramUser(models.Model):
 
 class ProjectsByTelegramUser(models.Model):
     """Проекты которые пользователь исполняет"""
+    """Нужно добавить подкатегории и отработать их"""
     external_id = models.TextField(
         verbose_name="User id in telegrams"
     )
@@ -146,6 +147,20 @@ class ProjectsByTelegramUser(models.Model):
     )
 
     objects = ProjectsByTelegramUserManager()
+
+
+class OffersToCustomer(models.Model):
+    external_from_id = models.TextField(
+        verbose_name="User id in telegrams"
+    )
+    external_to_id = models.TextField(
+        verbose_name="User id in telegrams"
+    )
+    offer = models.TextField(
+        verbose_name="Body offer"
+    )
+
+    objects = OffersToCustomerManager()
 
 
 class FilesByTelegramUser(models.Model):

@@ -139,3 +139,50 @@ en_customer_choose_keyboard = {
     ],
     'resize_keyboard': True
 }
+
+en_subcategories_sites = {
+    'keyboard': [
+        [
+            '🔙 Back to',
+        ],
+        [
+            'Landing Page',
+        ],
+        [
+            'Internet shop',
+        ],
+        [
+            'Business card website',
+        ],
+        [
+            'Promo Site',
+        ],
+        [
+            'Portal',
+        ],
+        [
+            'Notice boards site',
+        ],
+        [
+            'Blog',
+        ],
+    ],
+    'resize_keyboard': True
+}
+
+en_prev_next_keyboard = {
+    'keyboard': [
+        [
+            'Respond',
+        ],
+        [
+            'Prev',
+            'Next'
+        ],
+        [
+            '🔙 Back to',
+        ]
+    ],
+    'resize_keyboard': True
+}
+

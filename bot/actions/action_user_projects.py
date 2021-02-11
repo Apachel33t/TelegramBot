@@ -22,6 +22,9 @@ class UserProjects(TelegramBot):
             client.hset(f"user:{chat_object.from_id}", "action", "im_performer")
         elif chat_object.msg_text in in_process:
             UserProjects.get_customer_project(chat_object, client)
+            client.hset(f"user:{chat_object.from_id}", "action", "completed")
+        elif chat_object.msg_text in completed:
+            UserProjects.get_completed_projects(chat_object, client)
             client.hset(f"user:{chat_object.from_id}", "action", "in_process")
         elif client.hexists(f"user:{chat_object.from_id}", "action") is not False:
             if client.hget(f"user:{chat_object.from_id}", "action") == b"im_customer":
@@ -32,6 +35,8 @@ class UserProjects(TelegramBot):
                 UserProjects.create_task(chat_object, client)
             elif client.hget(f"user:{chat_object.from_id}", "action") == b"in_process":
                 UserProjects.in_process(chat_object, client)
+            elif client.hget(f"user:{chat_object.from_id}", "action") == b"completed":
+                pass
 
     @staticmethod
     def delAll(chat_object, client):
@@ -43,7 +48,7 @@ class UserProjects(TelegramBot):
         client.hdel(f"user:{chat_object.from_id}", "project_category")
         client.hdel(f"user:{chat_object.from_id}", "project_file_status")
         client.hdel(f"user:{chat_object.from_id}", "project_description")
-
+        client.hdel(f"user:{chat_object.from_id}", "project_deadline")
 
     # Start Customer
     @staticmethod
@@ -53,18 +58,19 @@ class UserProjects(TelegramBot):
             TelegramBot.send_create_task_keyboard(chat_object)
 
     @staticmethod
-    def get_customer_project(chat_object, client):
-        projects = []
-        project = list(ProjectsByTelegramUser.objects.filter(external_id=chat_object.from_id).values())
-        if User.objects.filter(external_id=chat_object.from_id, current_lang="RU"):
-            projects.append(['🔙 Назад'])
+    def get_completed_projects(chat_object, client):
+        if ProjectsByTelegramUser.objects.filter(external_id=chat_object.from_id, status='completed').exists():
+            project = list(ProjectsByTelegramUser.objects.filter(external_id=chat_object.from_id, status='completed').values())
+            TelegramBot.return_list_keyboard(chat_object, project, message_completed_projects)
+            client.hset(f"user:{chat_object.from_id}", "action", "completed")
         else:
-            projects.append(['🔙 Back to'])
-        for item in project:
-            projects.append([f'{item.get("title")}@{item.get("id")}@{item.get("external_id")}'])
-        empty_keyboard.update({"keyboard": projects})
-        pprint(empty_keyboard)
-        send_keyboard(empty_keyboard, chat_object.from_id, '.')
+            UserProjects.delAll(chat_object, client)
+            TelegramBot.send_emtpy_list(chat_object)
+
+    @staticmethod
+    def get_customer_project(chat_object, client):
+        project = list(ProjectsByTelegramUser.objects.filter(external_id=chat_object.from_id).values())
+        TelegramBot.return_list_keyboard(chat_object, project, message_processing_projects)
         client.hset(f"user:{chat_object.from_id}", "action", "in_process")
 
     @staticmethod
@@ -87,7 +93,6 @@ class UserProjects(TelegramBot):
             except:
                 TelegramBot.send_error_cannot_delete_project(chat_object)
 
-
     @staticmethod
     def create_task(chat_object, client):
         if client.hexists(f"user:{chat_object.from_id}", "project_name") is False:
@@ -107,6 +112,7 @@ class UserProjects(TelegramBot):
         elif client.hexists(f"user:{chat_object.from_id}", "project_category") is True \
                 and client.hexists(f"user:{chat_object.from_id}", "project_description") is False:
             if len(chat_object.msg_text) < 1024:
+                pprint('Дошло')
                 client.hset(f"user:{chat_object.from_id}", "project_description", chat_object.msg_text)
                 TelegramBot.send_enter_deadline_keyboard(chat_object)
             else:
@@ -117,6 +123,8 @@ class UserProjects(TelegramBot):
                 if date.today() < datetime.strptime(chat_object.msg_text, "%d.%m.%Y").date():
                     client.hset(f"user:{chat_object.from_id}", "project_deadline", chat_object.msg_text)
                     TelegramBot.send_attach_file_keyboard(chat_object)
+                else:
+                    TelegramBot.send_error_project_deadline_incorrect(chat_object)
             except:
                 TelegramBot.send_error_project_deadline_incorrect(chat_object)
         elif client.hexists(f"user:{chat_object.from_id}", "project_deadline") is True \
